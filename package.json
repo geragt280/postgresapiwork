@@ -1,0 +1,25 @@
+{
+  "name": "postgresapiwork",
+  "version": "1.0.0",
+  "description": "This project is demo application for working with postgres and node server using express",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geragt280/postgresapiwork.git"
+  },
+  "author": "Bilal Khan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/geragt280/postgresapiwork/issues"
+  },
+  "homepage": "https://github.com/geragt280/postgresapiwork#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "nodemon": "^2.0.15",
+    "pg": "^8.7.3"
+  }
+}
