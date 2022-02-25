@@ -1,6 +1,7 @@
 const express = require('express');
 const pool = require('../connection/db');
 const bookRouter = express.Router();
+const BookQuries = require('../queries/bookQuries');
 
 // middleware that is specific to this router
 bookRouter.use((req, res, next) => {
@@ -10,11 +11,12 @@ bookRouter.use((req, res, next) => {
 // define the home page route
 bookRouter.get('/', async (req, res) => {
     try {
-        const allbooks = await pool.query(`SELECT * FROM books`);
+        const allbooks = await BookQuries.getAllBooks();
+        // const allbooks = await pool.query(`SELECT * FROM books`);
         res.status(200).json({
             status:200,
-            response: allbooks.rows,
-            type: allbooks.command,
+            response: allbooks,
+            type: "SELECT",
             message: 'data successfully selected'
         });
     } catch (error) {
@@ -26,11 +28,11 @@ bookRouter.get('/', async (req, res) => {
 });
 bookRouter.get('/:id', async (req, res) => {
     try {
-        const allbooks = await pool.query(`SELECT * FROM books WHERE book_id=${req.params.id}`);
+        // const singlebooks = await pool.query(`SELECT * FROM books WHERE book_id=${req.params.id}`);
         res.status(200).json({
             status:200,
-            response: allbooks.rows,
-            type: allbooks.command,
+            response: singlebooks.rows,
+            type: singlebooks.command,
             message: 'specific data successfully selected'
         });
     } catch (error) {
@@ -45,12 +47,13 @@ bookRouter.post('/addbook', async (req, res) => {
     try {
         console.log(req.body);
         const { book_name, book_author } = req.body;
-        const newbook = await pool.query(`INSERT INTO books (book_name, book_author) VALUES ('${book_name}', '${book_author}') RETURNING *;`);
+        const newbook = await BookQuries.addBook(book_name, book_author);
+        // const newbook = await pool.query(`INSERT INTO books (book_name, book_author) VALUES ('${book_name}', '${book_author}') RETURNING *;`);
         // res.send('Book added:', newbook.rows[0]);
         res.status(200).json({
             status: 200,
-            reponse: newbook.rows[0],
-            type: editbook.command,
+            reponse: newbook,
+            type: "INSERT",
             message: 'data successfully inserted'
         });
     } catch (error) {
@@ -65,10 +68,10 @@ bookRouter.put('/editbook', async (req, res) => {
     try {
         console.log(req.body);
         const { book_id, book_name, book_author } = req.body;
-        const editbook = await pool.query(`UPDATE books
-        SET book_name = '${book_name}',
-        book_author = '${book_author}'
-        WHERE book_id=${book_id} RETURNING *;`);
+        // const editbook = await pool.query(`UPDATE books
+        // SET book_name = '${book_name}',
+        // book_author = '${book_author}'
+        // WHERE book_id=${book_id} RETURNING *;`);
         res.status(200).json({
             status:200,
             response: editbook.rows[0],

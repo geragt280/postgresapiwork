@@ -4,7 +4,9 @@
   "description": "This project is demo application for working with postgres and node server using express",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "migrate": "npx knex migrate:latest --knexfile connection/knexfile.js",
+    "new_migration": "knex migrate:make init --migrations-directory connection/migrations"
   },
   "repository": {
     "type": "git",
@@ -19,6 +21,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.3",
+    "knex": "^1.0.3",
     "nodemon": "^2.0.15",
     "pg": "^8.7.3"
   }

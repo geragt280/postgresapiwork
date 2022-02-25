@@ -1,4 +1,4 @@
-CREATE DATABASE productsdb;
+CREATE DATABASE librarydb;
 
 CREATE TABLE books(
     book_id SERIAL PRIMARY KEY,
