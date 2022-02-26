@@ -1,5 +1,5 @@
 const express = require('express');
-const pool = require('../connection/db');
+// const pool = require('../connection/db');
 const bookRouter = express.Router();
 const BookQuries = require('../queries/bookQuries');
 
@@ -26,14 +26,20 @@ bookRouter.get('/', async (req, res) => {
         });
     }
 });
-bookRouter.get('/:id', async (req, res) => {
+bookRouter.get('/:idorbookname', async (req, res, next) => {
     try {
+        var singlebook = null;
+        if (isNaN(req.params.idorbookname)) {
+            singlebook = await BookQuries.getSpecificBookByName(req.params.idorbookname);
+        }
+        else
+            singlebook = await BookQuries.getSpecificBook(req.params.idorbookname);
         // const singlebooks = await pool.query(`SELECT * FROM books WHERE book_id=${req.params.id}`);
         res.status(200).json({
             status:200,
-            response: singlebooks.rows,
-            type: singlebooks.command,
-            message: 'specific data successfully selected'
+            response: singlebook,
+            type: "SELECT",
+            message: 'specific data selected'
         });
     } catch (error) {
         res.status(400).json({
@@ -42,20 +48,28 @@ bookRouter.get('/:id', async (req, res) => {
         });
     }
 })
-// define the about route
+
 bookRouter.post('/addbook', async (req, res) => {
     try {
         console.log(req.body);
         const { book_name, book_author } = req.body;
-        const newbook = await BookQuries.addBook(book_name, book_author);
-        // const newbook = await pool.query(`INSERT INTO books (book_name, book_author) VALUES ('${book_name}', '${book_author}') RETURNING *;`);
-        // res.send('Book added:', newbook.rows[0]);
-        res.status(200).json({
-            status: 200,
-            reponse: newbook,
-            type: "INSERT",
-            message: 'data successfully inserted'
-        });
+        if (book_id && book_name && book_author) {
+            const newbook = await BookQuries.addBook(book_name, book_author);
+            // const newbook = await pool.query(`INSERT INTO books (book_name, book_author) VALUES ('${book_name}', '${book_author}') RETURNING *;`);
+            // res.send('Book added:', newbook.rows[0]);
+            res.status(200).json({
+                status: 200,
+                reponse: newbook,
+                type: "INSERT",
+                message: 'data successfully inserted'
+            });
+        }
+        else{
+            res.status(400).json({
+                status: 400,
+                response: "book_name, book_author can not be empty",
+            });
+        }
     } catch (error) {
         res.status(400).json({
             status: 400,
@@ -68,16 +82,25 @@ bookRouter.put('/editbook', async (req, res) => {
     try {
         console.log(req.body);
         const { book_id, book_name, book_author } = req.body;
-        // const editbook = await pool.query(`UPDATE books
-        // SET book_name = '${book_name}',
-        // book_author = '${book_author}'
-        // WHERE book_id=${book_id} RETURNING *;`);
-        res.status(200).json({
-            status:200,
-            response: editbook.rows[0],
-            type: editbook.command,
-            message: 'data successfully updated'
-        });
+        if (book_id && book_name && book_author) {
+            const editbook = await BookQuries.editBook(book_id, book_name, book_author);
+            // const editbook = await pool.query(`UPDATE books
+            // SET book_name = '${book_name}',
+            // book_author = '${book_author}'
+            // WHERE book_id=${book_id} RETURNING *;`);
+            res.status(200).json({
+                status:200,
+                response: editbook,
+                type: "UPDATE",
+                message: 'data successfully updated'
+            });
+        }
+        else{
+            res.status(400).json({
+                status: 400,
+                response: "book_id, book_name, book_author can not be empty",
+            });
+        }
     } catch (error) {
         res.status(400).json({
             status: 400,
